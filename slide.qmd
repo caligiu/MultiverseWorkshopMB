@@ -1,0 +1,567 @@
+---
+title: "Multiverse Analyses"
+author: |
+  Giulia Calignano  
+  Melanie S. Schreiner  
+  Alvin Tan  
+  Robert Hepach
+date: "June 17, 2025"
+format:
+  revealjs:
+    theme: default
+    slide-number: true
+    incremental: true
+    transition: slide
+    self-contained: true
+    progress: true
+execute:
+  echo: false
+  warning: true
+  error: true
+editor: visual
+lang: en
+---
+
+# Multiverse Analyses
+
+**by Giulia Calignano**\
+University of Padova\
+Department of Developmental and Social Psychology, Psicostat
+
+::: {style="display: flex; justify-content: center; align-items: center; gap: 30px; margin-top: 10px;"}
+<img src="images/mb_logo.png" alt="MB Logo" width="180"/> <img src="images/psicostat_logo.png" alt="Psicostat Logo" width="160"/> <img src="images/LOGOS.png" alt="Psicostat Logo" width="400"/>
+:::
+
+------------------------------------------------------------------------
+
+## Outline
+
+1.  **Part 1: Understanding the Multiverse**\
+
+2.  **Part 2: MB2-P Pupillometry Case Study**
+
+3.  **Co-authors:**\
+    Melanie S. Schreiner • Alvin Tan • Marlena Mayer • Robert Hepach and the MB2-P Team ---
+
+# Part 1: Understanding the Multiverse
+
+## What is Multiverse Analysis?
+
+-   “A systematic exploration of all reasonable analytical paths” (Steegen et al., 2016)\
+-   Enhances transparency and reduces researcher degrees of freedom\
+-   A garden of analytical forking paths: grounded in theory
+
+<img src="images/sam.png" height="290px" style="display: block; margin: auto;"/>
+
+## Why It Matters for Developmental Science
+
+-   **Universal Applicability**: works across contexts and methods\
+-   **Flexible Implementation**: supports exploratory and confirmatory designs\
+-   **Credibility Enhancement**: addresses replication challenges\
+-   **ManyBabies Alignment**: fits with goals of transparency and rigor
+
+------------------------------------------------------------------------
+
+## The Multiverse Landscape
+
+-   **Data Inclusion/Exclusion**: who/what to include?\
+-   **Preprocessing Methods**: cleaning, transforming\
+-   **Variable Operationalization**: defining constructs\
+-   **Statistical Models**: which methods and why
+
+------------------------------------------------------------------------
+
+## Visualizing the Multiverse
+
+```{r}
+#| include: false
+library(tidyverse)
+library(patchwork)
+
+set.seed(123)
+n_models <- 100
+
+model_data <- tibble(
+  model_id = 1:n_models,
+  df1 = sample(c("include", "exclude"), n_models, TRUE),
+  df2 = sample(c("inside", "outside"), n_models, TRUE),
+  df3 = sample(c("raw", "rolling"), n_models, TRUE),
+  df4 = sample(c("1s", "0.5s", "0.25s"), n_models, TRUE),
+  df5 = sample(c("0", "1", "2"), n_models, TRUE),
+  estimate = rnorm(n_models, 0, 0.3),
+  se = runif(n_models, 0.05, 0.1)
+) %>%
+  mutate(
+    ci_lower = estimate - 1.96 * se,
+    ci_upper = estimate + 1.96 * se,
+    p.value = 2 * (1 - pnorm(abs(estimate / se))),
+    log2FC = estimate * 5
+)
+
+# Ordina per estimate
+model_data <- model_data %>%
+  arrange(estimate) %>%
+  mutate(model_id_ordered = factor(row_number()))
+
+# Top Panel
+spec_top <- ggplot(model_data, aes(x = model_id_ordered, y = estimate)) +
+  geom_point(color = "steelblue", size = 2) +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), alpha = 0.4, width = 0.2) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(title = "Specification Curve", y = "Estimate", x = NULL) +
+  theme_minimal()
+
+# Bottom Panel - griglia forking
+fork_long <- model_data %>%
+  select(model_id_ordered, starts_with("df")) %>%
+  pivot_longer(cols = starts_with("df"), names_to = "fork", values_to = "value") %>%
+  mutate(value_id = as.numeric(factor(value)))
+
+spec_bottom <- ggplot(fork_long, aes(x = model_id_ordered, y = fct_rev(factor(fork)), fill = factor(value_id))) +
+  geom_tile(color = "white") +
+  labs(x = "Model ID", y = NULL) +
+  theme_minimal() +
+  theme(legend.position = "none", panel.grid = element_blank())
+
+# Combine plots
+spec_curve_plot <- spec_top / spec_bottom + plot_layout(heights = c(2, 1))
+```
+
+```{r}
+#| fig-cap: "Specification Curve"
+#| fig-width: 8
+#| fig-height: 5
+#| out-width: "100%"
+print(spec_curve_plot)
+```
+
+------------------------------------------------------------------------
+
+## Volcano Plot
+
+```{r}
+#| include: false
+volcano_plot <- ggplot(model_data, aes(x = log2FC, y = -log10(p.value))) +
+  geom_point(aes(color = p.value < 0.05), alpha = 0.8, size = 2) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "gray40") +
+  geom_vline(xintercept = c(-1, 1), linetype = "dotted", color = "gray40") +
+  scale_color_manual(values = c("TRUE" = "firebrick", "FALSE" = "gray60")) +
+  labs(
+    title = "Volcano Plot",
+    x = expression(log[2]~Fold~Change),
+    y = expression(-log[10]~(p~value)),
+    color = "p < .05"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| fig-cap: "Volcano Plot"
+#| fig-width: 8
+#| fig-height: 5
+#| out-width: "100%"
+print(volcano_plot)
+```
+
+------------------------------------------------------------------------
+
+## Part 2: MB2-P Pupillometry Case Study
+
+**Study Design Overview**
+
+-   Cross-lab pupillometry with over 30 labs worldwide
+-   Age cohorts: toddlers and adults
+-   Condition × Outcome × Time modeling
+-   From: Calignano, Girardi, Altoè., 2024 *First steps into the pupillometry multiverse of developmental science.* Behav Res Methods.
+
+------------------------------------------------------------------------
+
+## ManyBabies 2: Theory of Mind in Infancy
+
+<img src="images/a.png" height="550px" style="display: block; margin: auto;"/>
+
+------------------------------------------------------------------------
+
+## MB2 – Do toddlers and adults engage in spontaneous Theory of Mind (ToM)?
+
+<img src="images/tom.png" height="480px" style="display: block; margin: auto;"/>
+
+------------------------------------------------------------------------
+
+## MB2 – ToM: Paradigm
+
+<img src="images/b.png" height="700px" style="display: block; margin: auto;"/>
+
+------------------------------------------------------------------------
+
+## MB2 – ToM
+
+<img src="images/c.png" height="600px" style="display: block; margin: auto;"/>
+
+------------------------------------------------------------------------
+
+## MB2 – ToM
+
+<img src="images/d.png" height="600px" style="display: block; margin: auto;"/>
+
+------------------------------------------------------------------------
+
+## MB2P – Secondary Data Analysis
+
+<img src="images/e.png" height="350px" style="display: block; margin: auto;"/>
+
+------------------------------------------------------------------------
+
+## MB2P – Secondary Data Analysis
+
+<img src="images/f.png" height="480px" style="display: block; margin: auto;"/>
+
+------------------------------------------------------------------------
+
+## MB2P – Secondary Data Analysis
+
+-   MB2P investigates responses to **goal-congruent vs. goal-incongruent outcomes**
+-   Is the child **surprised** if the protagonist (bear) acts incongruently with the goal (following the mouse)?
+-   Measures: **pupil dilation** and **looking time** during events
+
+------------------------------------------------------------------------
+
+## The MB2P Preregistration and the Multiverse Approach
+
+<img src="images/g.png" height="450px" style="display: block; margin: auto;"/>
+
+------------------------------------------------------------------------
+
+## The MB2P Preregistration and Data Simulation
+
+-   **Data Collection** by MB2 completed in 2023. Raw data will be shared after Stage 1.
+-   **Analyses** will focus on the second test trial.
+-   **Data Simulation** mirrors expected data structure to pre-register processing and analysis strategies.
+-   Simulated dataset includes:
+    -   Participant ID, Two **age cohorts** , **Timestamps** or durations, **x/y coordinates**, **Pupil size** (left/right), **Lab ID**, **Conditions and outcomes**
+
+------------------------------------------------------------------------
+
+## MB2-P Multiverse Structure
+
+-   Five Forking Dimensions:
+    -   Pupil plausibility
+    -   Gaze within screen
+    -   Filtering via moving average
+    -   Baseline correction window (1s, 0.5s, 0.25s)
+    -   Participant exclusion (none, trial 2, trial 1&2)
+
+------------------------------------------------------------------------
+
+## Simulated Data
+
+```{r}
+#| include: false
+set.seed(123)
+n <- 60
+t_seq <- seq(-1000, 5000, length.out = 100)
+
+data <- expand.grid(
+  id = paste0("P", 1:n),
+  t = t_seq,
+  condition = c("knowledge", "ignorance"),
+  outcome = c("congruent", "incongruent"),
+  age = c("toddlers", "adults")
+) %>%
+  mutate(
+    base = 5 + rnorm(nrow(.), 0, 2),
+    effect = (condition == "ignorance") * 0.5 +
+             (outcome == "incongruent") * 0.3 +
+             (age == "toddlers") * 0.7,
+    pupil = base + effect + rnorm(nrow(.), 0, 0.2)
+  )
+```
+
+```{r}
+#| fig-cap: "Density Plot by Condition × Outcome × Age"
+#| fig-width: 8
+#| fig-height: 5
+#| out-width: "100%"
+
+# Crea un'etichetta unica per ogni combinazione
+data <- data %>%
+  mutate(group = paste(condition, outcome, age, sep = "_"))
+
+ggplot(data, aes(x = pupil, color = group, fill = group)) +
+  geom_density(alpha = 0.3) +
+  labs(
+    title = "Pupil Size Density by Experimental Condition",
+    x = "Pupil Size",
+    y = "Density",
+    color = "Group",
+    fill = "Group"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "right")
+```
+
+------------------------------------------------------------------------
+
+## DF1: Pupil Plausibility
+
+```{r}
+data <- data %>%
+  mutate(df1 = ifelse(pupil < 2 | pupil > 8, "implausible", "plausible"))
+
+ggplot(data, aes(x = t, y = pupil, color = df1)) +
+  geom_point(alpha = 0.5, size = 1) +
+  scale_color_manual(values = c("plausible" = "darkgreen", "implausible" = "firebrick")) +
+  labs(
+    title = "Pupil Size Over Time by Plausibility",
+    x = "Time (ms)",
+    y = "Pupil Size",
+    color = "df1 Category"
+  ) +
+  theme_minimal()
+```
+
+------------------------------------------------------------------------
+
+## DF1: Pupil Plausibility
+
+<img src="images/df1.png" height="580px" style="display: block; margin: auto;"/>
+
+------------------------------------------------------------------------
+
+## DF2: Gaze Filtering
+
+```{r}
+data <- data %>%
+  mutate(x = runif(nrow(.), -100, 1380),
+         y = runif(nrow(.), -100, 1060),
+         df2 = ifelse(x >= 0 & x <= 1280 & y >= 0 & y <= 960, "on", "off"))
+
+ggplot(data, aes(x, y, color = df2)) +
+  geom_point(alpha = 0.2) +
+  coord_fixed() +
+  theme_minimal() +
+  labs(title = "DF2: Screen Fixation")
+```
+
+------------------------------------------------------------------------
+
+## DF2: Gaze Filtering
+
+<img src="images/df2.png" height="580px" style="display: block; margin: auto;"/>
+
+------------------------------------------------------------------------
+
+## DF3: Moving Average Filter
+
+```{r}
+#| warning: false
+#| fig-cap: "DF3: Moving Average Filtering"
+#| fig-width: 8
+#| fig-height: 5
+#| out-width: "100%"
+
+library(zoo)
+
+data <- data %>%
+  group_by(id, condition, outcome, age) %>%
+  arrange(t) %>%
+  mutate(pupil_ma = rollapply(pupil, 5, mean, fill = NA, align = "right")) %>%
+  ungroup()
+
+ggplot(data, aes(t, pupil_ma, color = outcome)) +
+  geom_line(alpha = 0.15, size = 1.2) +  # linee per partecipante
+  geom_smooth(se = FALSE, method = "loess", span = 0.3, size = 1.5) +  # trend smussati per outcome
+  facet_wrap(~ age) +
+  scale_color_brewer(palette = "Dark2") +  # colori daltonici
+  theme_minimal() +
+  labs(
+    title = "DF3: Moving Average Filtering with Smooth Trends",
+    x = "Time (ms)",
+    y = "Smoothed Pupil Size",
+    color = "Outcome"
+  )
+
+```
+
+------------------------------------------------------------------------
+
+## DF4: Baseline Correction
+
+```{r}
+baseline <- data %>%
+  filter(t >= -1000 & t < 0) %>%
+  group_by(id, condition, outcome, age) %>%
+  summarise(b = mean(pupil, na.rm = TRUE), .groups = "drop")
+
+data <- data %>%
+  left_join(baseline, by = c("id", "condition", "outcome", "age")) %>%
+  mutate(pupil_bc = (pupil - b) / b)
+
+#| warning: false
+#| fig-cap: "DF4: Baseline-Corrected Pupil Traces with Smooth Trends"
+#| fig-width: 8
+#| fig-height: 5
+#| out-width: "100%"
+
+ggplot(data, aes(t, pupil_bc, color = condition)) +
+  geom_line(alpha = 0.15, size = 1.2) +  # linee per partecipante
+  geom_smooth(se = FALSE, method = "loess", span = 0.3, size = 1.5) +  # linea media
+  facet_wrap(~ age) +
+  scale_color_brewer(palette = "Dark2") +
+  theme_minimal() +
+  labs(
+    title = "DF4: Baseline-Corrected Pupil Traces with Smooth Trends",
+    x = "Time (ms)",
+    y = "Baseline-Corrected Pupil Size",
+    color = "Condition"
+  )
+```
+
+------------------------------------------------------------------------
+
+## DF4: Baseline correction
+
+<img src="images/df3.png" height="580px" style="display: block; margin: auto;"/>
+
+------------------------------------------------------------------------
+
+## DF5: Participant Inclusion Criteria
+
+```{r}
+valid_ids <- c("P1")
+data <- data %>%
+  mutate(df5 = ifelse(id %in% valid_ids, "included", "excluded"))
+
+data %>% count(df5)
+
+#| warning: false
+#| fig-cap: "Density Plot by Inclusion Status (df5)"
+#| fig-width: 8
+#| fig-height: 5
+#| out-width: "100%"
+
+ggplot(data, aes(x = pupil, fill = df5, color = df5)) +
+  geom_density(alpha = 0.3, size = 1) +
+  scale_fill_brewer(palette = "Dark2") +
+  scale_color_brewer(palette = "Dark2") +
+  labs(
+    title = "Distribution of Pupil Size by Inclusion Status",
+    x = "Pupil Size",
+    y = "Density",
+    fill = "Status",
+    color = "Status"
+  ) +
+  theme_minimal()
+
+
+```
+
+------------------------------------------------------------------------
+
+## Specification Curve of the Multiverse' Models
+
+```{r}
+#| fig-cap: "Specification Curve of Model Estimates"
+#| fig-width: 8
+#| fig-height: 5
+#| out-width: "100%"
+
+library(patchwork)
+
+spec_top <- ggplot(model_data, aes(x = model_id_ordered, y = estimate)) +
+  geom_point(color = "steelblue", size = 2) +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), alpha = 0.4, width = 0.2) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "Estimate", x = NULL, title = "Specification Curve") +
+  theme_minimal()
+
+fork_long <- model_data %>%
+  pivot_longer(cols = starts_with("df"), names_to = "fork", values_to = "value") %>%
+  mutate(value_id = as.numeric(factor(value)))
+
+spec_bottom <- ggplot(fork_long, aes(x = model_id_ordered, y = fct_rev(factor(fork)), fill = factor(value_id))) +
+  geom_tile(color = "white") +
+  labs(x = "Model ID", y = NULL) +
+  #scale_fill_brewer(palette = "Pastel1") +
+  theme_minimal() +
+  theme(legend.position = "none", panel.grid = element_blank())
+
+spec_curve_plot <- spec_top / spec_bottom + plot_layout(heights = c(2, 1))
+spec_curve_plot
+
+
+```
+
+------------------------------------------------------------------------
+
+## Volcano plot of the Multiverse' Models
+
+```{r}
+#| include: false
+volcano_plot <- ggplot(model_data, aes(x = log2FC, y = -log10(p.value))) +
+  geom_point(aes(color = p.value < 0.05), alpha = 0.8, size = 2) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "gray40") +
+  geom_vline(xintercept = c(-1, 1), linetype = "dotted", color = "gray40") +
+  scale_color_manual(values = c("TRUE" = "firebrick", "FALSE" = "gray60")) +
+  labs(
+    title = "Volcano Plot",
+    x = expression(log[2]~Fold~Change),
+    y = expression(-log[10]~(p~value)),
+    color = "p < .05"
+  ) +
+  theme_minimal()
+
+```
+
+```{r}
+#| fig-cap: "Volcano Plot of Effect Estimates"
+#| fig-width: 8
+#| fig-height: 5
+#| out-width: "100%"
+print(volcano_plot)
+
+```
+
+------------------------------------------------------------------------
+
+# Conclusions
+
+-   The Explorative Multiverse analysis approaches shows how results shift across processing paths: their fragility/robustness
+
+-   The Multiverse reveal consistent vs. fragile effects
+
+-   
+
+    ## Aligned with suggestions from Calignano et al. (2024) and Steegen et al. (2016)
+
+# Next steps
+
+-   Implementation Generalized Additive Mixed effect Models (Gamm) **non linear relationship between pupil variation and time**
+-   **Shiny app** to allow the whole community to explore and *touch* data
+-   Towards a consensus for a **transparent** and **reproducible** data management and preprocessing pipelines, thanks to collaborative multilab efforts
+
+# References 1/3
+
+-   Steegen, S., Tuerlinckx, F., Gelman, A., & Vanpaemel, W. (2016). **Increasing transparency through a multiverse analysis**. Perspectives on Psychological Science
+
+-   Dragicevic, P., Jansen, Y., Sarma, A., Kay, M., & Chevalier, F. (2019, May). **Increasing the transparency of research papers with explorable multiverse analyses. In proceedings of the 2019 chi conference on human factors in computing systems**
+
+# References 2/3
+-   Simonsohn, U., Simmons, J. P., & Nelson, L. D. (2020). **Specification curve analysis.** Nature Human Behaviour
+
+-   Calignano, G., Girardi, P., & Altoè, G. (2024). **First steps into the pupillometry multiverse of developmental science.** Behavior Research Methods
+
+-   Sirois, S., Brisson, J., Blaser, E., Calignano, G., Donenfeld, J., Hepach, R., ... & Valenza, E. (2023). **The pupil collaboration: A multi-lab, multi-method analysis of goal attribution in infants.** Infant Behavior and Development
+
+# References extra
+-   **STAY TUNED**: Altoè, G., Gambarota, F., Girardi, P., Vesely, A., Calignano, G., Pastore, M., & Finos, L. (in progress). Multiverse analysis in R: Exploratory and inferential approaches.
+
+------------------------------------------------------------------------
+
+## Thank You
+
+-   Questions? Feedback?
+
+::: {style="display: flex; justify-content: center; align-items: center; gap: 30px; margin-top: 10px;"}
+<img src="images/mb_logo.png" alt="MB Logo" width="180"/> <img src="images/psicostat_logo.png" alt="Psicostat Logo" width="160"/> <img src="images/LOGOS.png" alt="Psicostat Logo" width="400"/>
+:::
