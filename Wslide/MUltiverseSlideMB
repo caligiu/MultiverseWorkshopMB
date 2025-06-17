@@ -67,6 +67,68 @@ Department of Developmental and Social Psychology, Psicostat
 -   **Credibility Enhancement**: addresses replication challenges\
 -   **ManyBabies Alignment**: fits with goals of transparency and rigor
 
+---
+
+---
+
+## Guiding Principles
+
+- **Think Before Testing**  
+  Evaluate choices before collecting data.
+
+- **Theoretical Grounding**  
+  Base decisions on prior evidence.
+
+- **Complete Transparency**  
+  Present all plausible paths.
+
+- **Computational Implementation**  
+  Use tools to explore the full analytic space.
+
+---
+
+## Types of Multiverse Approaches
+
+### Exploratory Methods
+
+- Vibration of Effects (VoE)  
+- Summary indices  
+- Graphical representations  
+
+> Focus: Identify patterns and generate hypotheses.
+
+---
+
+### Inferential Methods
+
+- PIMA (Post-selection Inference) 
+- Sign-flipping score test  
+
+> Focus: Maintain statistical rigor while exploring variation.
+
+---
+
+## Addressing the Credibility Crisis
+
+### Problem: **P-hacking**
+
+- Selective analysis for significance undermines integrity.
+
+### Problem: **HARKing**
+
+- Hypothesizing after results are known (post hoc as a priori).
+
+---
+
+## Solutions via Multiverse Analysis
+
+- **Multiverse Transparency**  
+  Makes all choices visible to prevent selective reporting.
+
+- **"Legal P-hacking"**  
+  Exploring multiple paths is valid if systematic and transparent.
+
+
 ------------------------------------------------------------------------
 
 ## The Multiverse Landscape
@@ -561,6 +623,7 @@ print(volcano_plot)
 -   Sirois, S., Brisson, J., Blaser, E., Calignano, G., Donenfeld, J., Hepach, R., ... & Valenza, E. (2023). **The pupil collaboration: A multi-lab, multi-method analysis of goal attribution in infants.** Infant Behavior and Development
 
 # References extra
+- Girardi P, Vesely A, Lakens D, Altoè G, Pastore M, Calcagnì A, Finos L. 2024 **Post-selection Inference in Multiverse Analysis (PIMA): An Inferential Framework Based on the Sign Flipping Score Test.* Psychometrika. 
 -   **STAY TUNED**: Altoè, G., Gambarota, F., Girardi, P., Vesely, A., Calignano, G., Pastore, M., & Finos, L. (in progress). Multiverse analysis in R: Exploratory and inferential approaches.
 
 ------------------------------------------------------------------------
