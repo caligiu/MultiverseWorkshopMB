@@ -49,7 +49,8 @@ Department of Developmental and Social Psychology, Psicostat
     Melanie S. Schreiner • Alvin Tan • Marlena Mayer • Robert Hepach and the MB2-P Team 
 
 ---
-# The Phisolophical Multiverse approach
+
+# Part 1: The Phisolophical Multiverse approach
 
 ## What is Multiverse Analysis?
 
@@ -425,7 +426,7 @@ ggplot(data, aes(t, pupil_bc, color = condition)) +
 
 ------------------------------------------------------------------------
 
-## DF4: Baseline correction
+## DF4: Baseline correction from a single Universe
 
 <img src="images/df3.png" height="580px" style="display: block; margin: auto;"/>
 
@@ -536,13 +537,11 @@ print(volcano_plot)
 
 -   The Multiverse reveal consistent vs. fragile effects
 
--   
-
-    ## Aligned with suggestions from Calignano et al. (2024) and Steegen et al. (2016)
+-   Aligned with suggestions from Calignano et al. (2024) and Steegen et al. (2016)
 
 # Next steps
 
--   Implementation Generalized Additive Mixed effect Models (Gamm) **non linear relationship between pupil variation and time**
+-   Implementation Generalized Additive Mixed effect Models (GAMMs) **non linear relationship between pupil variation and time**
 -   **Shiny app** to allow the whole community to explore and *touch* data
 -   Towards a consensus for a **transparent** and **reproducible** data management and preprocessing pipelines, thanks to collaborative multilab efforts
 
