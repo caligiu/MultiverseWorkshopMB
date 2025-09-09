@@ -1,5 +1,5 @@
 # MultiverseWorkshopMB
-Quarto code and HTML slide of the ManyBabies Workshop https://manybabies.org/events/
+Quarto code and HTML slide of the ManyBabies Workshop [https://manybabies.org/events/](https://caligiu.github.io/MultiverseWorkshopMB/)
 
 June 17, 2025 - 14:00-15:30 UTC (4pm CEST) on Zoom
 Workshop: Multiverse Analyses
