@@ -2,7 +2,7 @@
 # Quarto Code & HTML Slides – ManyBabies Workshop
 
 🔗 [Slides & Code](https://caligiu.github.io/MultiverseWorkshopMB/Wslide/Index.html#/title-slide)
-🔗 [Video]([https://caligiu.github.io/MultiverseWorkshopMB/](https://www.youtube.com/watch?v=9iuddKmssaU&ab_channel=ManyBabies))
+🎥 [Video](https://www.youtube.com/watch?v=9iuddKmssaU&ab_channel=ManyBabies)
 
 ---
 
@@ -28,7 +28,6 @@ In this workshop on **Multiverse Analyses**, Giulia will:
 ---
 
 ## Resources
-- 📑 Slides & materials available at: [caligiu.github.io/MultiverseWorkshopMB](https://caligiu.github.io/MultiverseWorkshopMB/)  
 - 🌐 More about ManyBabies: [manybabies.org](https://manybabies.org)  
 
 
